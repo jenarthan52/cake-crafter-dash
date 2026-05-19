@@ -76,11 +76,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Sweet Treat Bakery — Artisan Cakes & Pastries" },
       { name: "description", content: "Order fresh wedding cakes, birthday cakes, pastries, breads and custom photo cakes from Sweet Treat Bakery." },
-      { property: "og:title", content: "Sweet Treat Bakery" },
-      { property: "og:description", content: "Artisan cakes, pastries and breads — baked fresh daily." },
+      { property: "og:title", content: "Sweet Treat Bakery — Artisan Cakes & Pastries" },
+      { property: "og:description", content: "Order fresh wedding cakes, birthday cakes, pastries, breads and custom photo cakes from Sweet Treat Bakery." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Sweet Treat Bakery — Artisan Cakes & Pastries" },
+      { name: "twitter:description", content: "Order fresh wedding cakes, birthday cakes, pastries, breads and custom photo cakes from Sweet Treat Bakery." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1cc6785-eb23-41b4-9aa2-7ea6ec699c52/id-preview-dc08e001--21941afa-24f8-443b-9fa2-5b35cd2d8701.lovable.app-1779201619963.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1cc6785-eb23-41b4-9aa2-7ea6ec699c52/id-preview-dc08e001--21941afa-24f8-443b-9fa2-5b35cd2d8701.lovable.app-1779201619963.png" },
     ],
     links: [
       {
