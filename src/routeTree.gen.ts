@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CustomOrderRouteImport } from './routes/custom-order'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as BakerRouteImport } from './routes/baker'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -26,6 +27,11 @@ const CustomOrderRoute = CustomOrderRouteImport.update({
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BakerRoute = BakerRouteImport.update({
+  id: '/baker',
+  path: '/baker',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -62,6 +68,7 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/baker': typeof BakerRoute
   '/cart': typeof CartRoute
   '/custom-order': typeof CustomOrderRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/baker': typeof BakerRoute
   '/cart': typeof CartRoute
   '/custom-order': typeof CustomOrderRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -82,6 +90,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/baker': typeof BakerRoute
   '/cart': typeof CartRoute
   '/custom-order': typeof CustomOrderRoute
   '/admin/categories': typeof AdminCategoriesRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/baker'
     | '/cart'
     | '/custom-order'
     | '/admin/categories'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/baker'
     | '/cart'
     | '/custom-order'
     | '/admin/categories'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/baker'
     | '/cart'
     | '/custom-order'
     | '/admin/categories'
@@ -124,6 +136,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BakerRoute: typeof BakerRoute
   CartRoute: typeof CartRoute
   CustomOrderRoute: typeof CustomOrderRoute
 }
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/cart'
       fullPath: '/cart'
       preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/baker': {
+      id: '/baker'
+      path: '/baker'
+      fullPath: '/baker'
+      preLoaderRoute: typeof BakerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -208,6 +228,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  BakerRoute: BakerRoute,
   CartRoute: CartRoute,
   CustomOrderRoute: CustomOrderRoute,
 }
