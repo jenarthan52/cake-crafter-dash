@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ChefHat, Clock, Package } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ChefHat, Clock, Package, LogOut } from "lucide-react";
+import { useEffect } from "react";
 import { useStore, type OrderStatus } from "@/store/useStore";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,14 @@ const RECIPES = [
 ];
 
 function BakerView() {
-  const { orders, updateOrderStatus } = useStore();
+  const { orders, updateOrderStatus, currentStaff, staffLogout } = useStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!currentStaff || (currentStaff.role !== "baker" && currentStaff.role !== "admin")) {
+      navigate({ to: "/login" });
+    }
+  }, [currentStaff, navigate]);
+  if (!currentStaff) return null;
   const active = orders.filter((o) => o.status === "Pending" || o.status === "Baking");
 
   const next: Record<OrderStatus, OrderStatus | null> = {
@@ -27,12 +35,17 @@ function BakerView() {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="mb-8 flex items-center gap-3">
+      <div className="mb-8 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--gradient-gold)] text-gold-foreground"><ChefHat className="h-6 w-6" /></div>
         <div>
           <h1 className="font-display text-3xl text-primary">Kitchen Dashboard</h1>
           <p className="text-sm text-muted-foreground">Active bakes only. No pricing or revenue here.</p>
         </div>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => { staffLogout(); navigate({ to: "/login" }); }}>
+          <LogOut className="mr-2 h-4 w-4" /> Sign out
+        </Button>
       </div>
 
       <section className="mb-10">
