@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Role = "customer" | "admin" | "baker";
+export type Role = "customer" | "admin" | "baker" | "staff";
 
 export type OrderStatus = "Pending" | "Baking" | "Out for Delivery" | "Delivered";
 
@@ -41,6 +41,7 @@ export interface CartItem {
 
 export interface Order {
   id: string;
+  customerId?: string;
   customerName: string;
   phone: string;
   address: string;
@@ -51,13 +52,41 @@ export interface Order {
   createdAt: number;
 }
 
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  createdAt: number;
+}
+
+export interface StaffSession {
+  username: string;
+  role: "admin" | "baker" | "staff";
+}
+
+const STAFF_CREDENTIALS: Record<string, { password: string; role: "admin" | "baker" | "staff" }> = {
+  admin: { password: "admin123", role: "admin" },
+  baker: { password: "baker123", role: "baker" },
+  staff: { password: "staff123", role: "staff" },
+};
+
 interface State {
   role: Role;
   categories: Category[];
   products: Product[];
   cart: CartItem[];
   orders: Order[];
+  customers: Customer[];
+  currentCustomer: Customer | null;
+  currentStaff: StaffSession | null;
   setRole: (r: Role) => void;
+  staffLogin: (username: string, password: string) => StaffSession | null;
+  staffLogout: () => void;
+  customerRegister: (data: Omit<Customer, "id" | "createdAt">) => Customer | { error: string };
+  customerLogin: (email: string, password: string) => Customer | null;
+  customerLogout: () => void;
   addCategory: (name: string) => void;
   updateCategory: (id: string, name: string) => void;
   deleteCategory: (id: string) => void;
@@ -172,8 +201,10 @@ export const useStore = create<State>()(
       removeFromCart: (id) => set((s) => ({ cart: s.cart.filter((c) => c.id !== id) })),
       clearCart: () => set({ cart: [] }),
       placeOrder: (o) => {
+        const cust = get().currentCustomer;
         const order: Order = {
           ...o,
+          customerId: cust?.id,
           id: `ORD-${1000 + get().orders.length + 1}`,
           createdAt: Date.now(),
           status: "Pending",
@@ -183,6 +214,31 @@ export const useStore = create<State>()(
       },
       updateOrderStatus: (id, status) =>
         set((s) => ({ orders: s.orders.map((o) => (o.id === id ? { ...o, status } : o)) })),
+      customers: [],
+      currentCustomer: null,
+      currentStaff: null,
+      staffLogin: (username, password) => {
+        const u = STAFF_CREDENTIALS[username.toLowerCase()];
+        if (!u || u.password !== password) return null;
+        const session: StaffSession = { username: username.toLowerCase(), role: u.role };
+        set({ currentStaff: session, role: u.role });
+        return session;
+      },
+      staffLogout: () => set({ currentStaff: null, role: "customer" }),
+      customerRegister: (data) => {
+        const existing = get().customers.find((c) => c.email.toLowerCase() === data.email.toLowerCase());
+        if (existing) return { error: "An account with this email already exists." };
+        const cust: Customer = { ...data, id: uid(), createdAt: Date.now() };
+        set((s) => ({ customers: [...s.customers, cust], currentCustomer: cust }));
+        return cust;
+      },
+      customerLogin: (email, password) => {
+        const c = get().customers.find((x) => x.email.toLowerCase() === email.toLowerCase() && x.password === password);
+        if (!c) return null;
+        set({ currentCustomer: c });
+        return c;
+      },
+      customerLogout: () => set({ currentCustomer: null }),
     }),
     { name: "sweet-treat-bakery" },
   ),
