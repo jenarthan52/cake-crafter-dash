@@ -1,5 +1,8 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Package, ShoppingBag, Tags } from "lucide-react";
+import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import { LayoutDashboard, Package, ShoppingBag, Tags, Users, LogOut } from "lucide-react";
+import { useEffect } from "react";
+import { useStore } from "@/store/useStore";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin")({ component: AdminLayout });
 
@@ -8,10 +11,19 @@ const items = [
   { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/categories", label: "Categories", icon: Tags },
+  { to: "/admin/customers", label: "Customers", icon: Users },
 ];
 
 function AdminLayout() {
   const path = useRouterState({ select: (r) => r.location.pathname });
+  const { currentStaff, staffLogout } = useStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!currentStaff || currentStaff.role !== "admin") {
+      navigate({ to: "/login" });
+    }
+  }, [currentStaff, navigate]);
+  if (!currentStaff || currentStaff.role !== "admin") return null;
   return (
     <div className="mx-auto flex max-w-7xl gap-6 px-4 py-8 sm:px-6">
       <aside className="hidden w-56 shrink-0 md:block">
@@ -24,6 +36,9 @@ function AdminLayout() {
               </Link>
             );
           })}
+          <Button variant="ghost" size="sm" className="mt-2 w-full justify-start gap-3 text-muted-foreground" onClick={() => { staffLogout(); navigate({ to: "/login" }); }}>
+            <LogOut className="h-4 w-4" /> Sign out
+          </Button>
         </div>
       </aside>
       <div className="min-w-0 flex-1">

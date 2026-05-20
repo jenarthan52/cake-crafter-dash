@@ -9,6 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StaffRouteImport } from './routes/staff'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as CustomerAuthRouteImport } from './routes/customer-auth'
 import { Route as CustomOrderRouteImport } from './routes/custom-order'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as BakerRouteImport } from './routes/baker'
@@ -17,8 +20,24 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminProductsRouteImport } from './routes/admin.products'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerAuthRoute = CustomerAuthRouteImport.update({
+  id: '/customer-auth',
+  path: '/customer-auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomOrderRoute = CustomOrderRouteImport.update({
   id: '/custom-order',
   path: '/custom-order',
@@ -59,6 +78,11 @@ const AdminOrdersRoute = AdminOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
@@ -71,7 +95,11 @@ export interface FileRoutesByFullPath {
   '/baker': typeof BakerRoute
   '/cart': typeof CartRoute
   '/custom-order': typeof CustomOrderRoute
+  '/customer-auth': typeof CustomerAuthRoute
+  '/login': typeof LoginRoute
+  '/staff': typeof StaffRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/': typeof AdminIndexRoute
@@ -81,7 +109,11 @@ export interface FileRoutesByTo {
   '/baker': typeof BakerRoute
   '/cart': typeof CartRoute
   '/custom-order': typeof CustomOrderRoute
+  '/customer-auth': typeof CustomerAuthRoute
+  '/login': typeof LoginRoute
+  '/staff': typeof StaffRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin': typeof AdminIndexRoute
@@ -93,7 +125,11 @@ export interface FileRoutesById {
   '/baker': typeof BakerRoute
   '/cart': typeof CartRoute
   '/custom-order': typeof CustomOrderRoute
+  '/customer-auth': typeof CustomerAuthRoute
+  '/login': typeof LoginRoute
+  '/staff': typeof StaffRoute
   '/admin/categories': typeof AdminCategoriesRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/': typeof AdminIndexRoute
@@ -106,7 +142,11 @@ export interface FileRouteTypes {
     | '/baker'
     | '/cart'
     | '/custom-order'
+    | '/customer-auth'
+    | '/login'
+    | '/staff'
     | '/admin/categories'
+    | '/admin/customers'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/'
@@ -116,7 +156,11 @@ export interface FileRouteTypes {
     | '/baker'
     | '/cart'
     | '/custom-order'
+    | '/customer-auth'
+    | '/login'
+    | '/staff'
     | '/admin/categories'
+    | '/admin/customers'
     | '/admin/orders'
     | '/admin/products'
     | '/admin'
@@ -127,7 +171,11 @@ export interface FileRouteTypes {
     | '/baker'
     | '/cart'
     | '/custom-order'
+    | '/customer-auth'
+    | '/login'
+    | '/staff'
     | '/admin/categories'
+    | '/admin/customers'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/'
@@ -139,10 +187,34 @@ export interface RootRouteChildren {
   BakerRoute: typeof BakerRoute
   CartRoute: typeof CartRoute
   CustomOrderRoute: typeof CustomOrderRoute
+  CustomerAuthRoute: typeof CustomerAuthRoute
+  LoginRoute: typeof LoginRoute
+  StaffRoute: typeof StaffRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer-auth': {
+      id: '/customer-auth'
+      path: '/customer-auth'
+      fullPath: '/customer-auth'
+      preLoaderRoute: typeof CustomerAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/custom-order': {
       id: '/custom-order'
       path: '/custom-order'
@@ -199,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminOrdersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/categories': {
       id: '/admin/categories'
       path: '/categories'
@@ -211,6 +290,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
+  AdminCustomersRoute: typeof AdminCustomersRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminProductsRoute: typeof AdminProductsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -218,6 +298,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriesRoute: AdminCategoriesRoute,
+  AdminCustomersRoute: AdminCustomersRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminProductsRoute: AdminProductsRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -231,17 +312,10 @@ const rootRouteChildren: RootRouteChildren = {
   BakerRoute: BakerRoute,
   CartRoute: CartRoute,
   CustomOrderRoute: CustomOrderRoute,
+  CustomerAuthRoute: CustomerAuthRoute,
+  LoginRoute: LoginRoute,
+  StaffRoute: StaffRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
