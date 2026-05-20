@@ -1,5 +1,5 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Cake, ShoppingBag, LayoutDashboard, ChefHat, User } from "lucide-react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Cake, ShoppingBag, LayoutDashboard, ChefHat, User, Store, LogOut, LogIn } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,9 +19,15 @@ const nav = [
 ];
 
 export function Header() {
-  const { role, setRole, cart } = useStore();
+  const { cart, currentStaff, currentCustomer, staffLogout, customerLogout } = useStore();
   const path = useRouterState({ select: (r) => r.location.pathname });
+  const navigate = useNavigate();
   const cartCount = cart.reduce((a, c) => a + c.qty, 0);
+  const label = currentStaff ? currentStaff.username : currentCustomer ? currentCustomer.name.split(" ")[0] : "Guest";
+  const icon = currentStaff?.role === "admin" ? <LayoutDashboard className="h-4 w-4" />
+    : currentStaff?.role === "baker" ? <ChefHat className="h-4 w-4" />
+    : currentStaff?.role === "staff" ? <Store className="h-4 w-4" />
+    : <User className="h-4 w-4" />;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
@@ -67,22 +73,45 @@ export function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="default" size="sm" className="gap-2 bg-primary hover:bg-primary/90">
-                {role === "admin" ? <LayoutDashboard className="h-4 w-4" /> : role === "baker" ? <ChefHat className="h-4 w-4" /> : <User className="h-4 w-4" />}
-                <span className="capitalize">{role}</span>
+                {icon}
+                <span className="capitalize max-w-20 truncate">{label}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52">
-              <DropdownMenuLabel>Switch role</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {currentStaff ? `Signed in: ${currentStaff.role}` : currentCustomer ? `Customer: ${currentCustomer.email}` : "Account"}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild onClick={() => setRole("customer")}>
-                <Link to="/"><User className="mr-2 h-4 w-4" /> Customer</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild onClick={() => setRole("admin")}>
-                <Link to="/admin"><LayoutDashboard className="mr-2 h-4 w-4" /> Admin</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild onClick={() => setRole("baker")}>
-                <Link to="/baker"><ChefHat className="mr-2 h-4 w-4" /> Baker Kitchen</Link>
-              </DropdownMenuItem>
+              {currentCustomer ? (
+                <DropdownMenuItem onClick={() => { customerLogout(); navigate({ to: "/" }); }}>
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out customer
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem asChild>
+                  <Link to="/customer-auth"><LogIn className="mr-2 h-4 w-4" /> Customer login / register</Link>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              {currentStaff ? (
+                <>
+                  {currentStaff.role === "admin" && (
+                    <DropdownMenuItem asChild><Link to="/admin"><LayoutDashboard className="mr-2 h-4 w-4" /> Admin dashboard</Link></DropdownMenuItem>
+                  )}
+                  {(currentStaff.role === "baker" || currentStaff.role === "admin") && (
+                    <DropdownMenuItem asChild><Link to="/baker"><ChefHat className="mr-2 h-4 w-4" /> Kitchen</Link></DropdownMenuItem>
+                  )}
+                  {(currentStaff.role === "staff" || currentStaff.role === "admin") && (
+                    <DropdownMenuItem asChild><Link to="/staff"><Store className="mr-2 h-4 w-4" /> POS / Billing</Link></DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={() => { staffLogout(); navigate({ to: "/" }); }}>
+                    <LogOut className="mr-2 h-4 w-4" /> Sign out staff
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <DropdownMenuItem asChild>
+                  <Link to="/login"><LogIn className="mr-2 h-4 w-4" /> Staff sign in</Link>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
