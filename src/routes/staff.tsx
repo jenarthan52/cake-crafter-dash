@@ -32,7 +32,7 @@ function StaffPOS() {
   const add = (p: typeof products[number]) => {
     setCart((c) => {
       const ex = c.find((x) => x.productId === p.id);
-      if (ex) return c.map((x) => x.id === ex.id ? x : x.productId === p.id ? { ...x, qty: x.qty + 1 } : x);
+      if (ex) return c.map((x) => x.productId === p.id ? { ...x, qty: x.qty + 1 } : x);
       return [...c, { productId: p.id, name: p.name, price: p.salePrice ?? p.price, image: p.image, qty: 1 }];
     });
   };
