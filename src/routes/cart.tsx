@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,11 +11,14 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/cart")({ component: CartPage });
 
 function CartPage() {
-  const { cart, updateCartQty, removeFromCart, placeOrder } = useStore();
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const { cart, updateCartQty, removeFromCart, placeOrder, currentCustomer } = useStore();
+  const [name, setName] = useState(currentCustomer?.name ?? "");
+  const [phone, setPhone] = useState(currentCustomer?.phone ?? "");
   const [address, setAddress] = useState("");
   const navigate = useNavigate();
+  useEffect(() => {
+    if (currentCustomer) { setName(currentCustomer.name); setPhone(currentCustomer.phone); }
+  }, [currentCustomer]);
 
   const subtotal = cart.reduce((a, c) => a + c.price * c.qty, 0);
   const delivery = subtotal > 0 ? (subtotal > 999 ? 0 : 49) : 0;
